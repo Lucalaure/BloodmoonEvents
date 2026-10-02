@@ -1,0 +1,15 @@
+{
+	"schemaVersion": 1,
+	"id": "bloodmoonevents-test",
+	"version": "1.0.0",
+	"name": "Bloodmoon Events Tests",
+	"environment": "*",
+	"entrypoints": {
+		"fabric-client-gametest": [
+			"com.theseeklab.bloodmoon.test.BloodMoonClientGameTest"
+		]
+	},
+	"depends": {
+		"bloodmoonevents": "*"
+	}
+}

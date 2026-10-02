@@ -1,0 +1,16 @@
+{
+	"required": true,
+	"package": "com.theseeklab.bloodmoon.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"mixins": [
+		"AbstractCubeMobMixin",
+		"EnvironmentAttributeSystemBuilderMixin",
+		"MobAccessor"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

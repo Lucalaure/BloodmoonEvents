@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "bloodmoonevents",
+	"version": "${version}",
+	"name": "Bloodmoon Events",
+	"description": "Every few nights a Blood Moon rises: the sky turns red, sleep is impossible, and hordes of mobs with upgraded AI lay siege to your base.",
+	"authors": [
+		"The Seek Lab"
+	],
+	"license": "MIT",
+	"icon": "assets/bloodmoonevents/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.theseeklab.bloodmoon.BloodmoonEvents"
+		],
+		"client": [
+			"com.theseeklab.bloodmoon.client.BloodmoonEventsClient"
+		]
+	},
+	"mixins": [
+		"bloodmoonevents.mixins.json",
+		{
+			"config": "bloodmoonevents.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

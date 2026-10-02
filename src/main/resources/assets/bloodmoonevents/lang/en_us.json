@@ -1,0 +1,16 @@
+{
+	"bloodmoonevents.warning": "The moon is turning red... the Blood Moon rises tonight.",
+	"bloodmoonevents.subtitle": "The horde is coming",
+	"bloodmoonevents.ended": "The Blood Moon has set. You survived the night.",
+	"bloodmoonevents.stopped": "The Blood Moon fades away.",
+	"bloodmoonevents.sleep_blocked": "You can't sleep during a Blood Moon!",
+	"bloodmoonevents.title.numbered": "Blood Moon #%s",
+	"bloodmoonevents.started.numbered": "Blood Moon #%s has risen! Survive until dawn.",
+	"bloodmoonevents.subtitle.stronger": "The horde grows larger",
+	"bloodmoonevents.unlock.zombie_break": "Zombies can now break through walls",
+	"bloodmoonevents.unlock.creeper_breach": "Creepers blast through walls to reach you",
+	"bloodmoonevents.unlock.mobs": "New in the horde: ",
+	"bloodmoonevents.unlock.zombie_build": "Zombies build their way up to you",
+	"bloodmoonevents.unlock.slime_jump": "Slimes leap over walls",
+	"bloodmoonevents.unlock.long_range": "The horde can sense you from further away"
+}

@@ -7,6 +7,8 @@ import com.theseeklab.bloodmoon.config.BloodMoonConfig;
 import com.theseeklab.bloodmoon.mixin.MobAccessor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
@@ -62,6 +64,23 @@ public final class HordeMobs {
 		if (mob instanceof Zombie || mob instanceof AbstractSkeleton) {
 			equipArmor(mob, bloodMoonLevel);
 		}
+
+		if (RPG_ADVANCED_DIFFICULTY) {
+			tagChampionOdds(mob, bloodMoonLevel);
+		}
+	}
+
+	private static final boolean RPG_ADVANCED_DIFFICULTY = FabricLoader.getInstance().isModLoaded("rpgadvanceddifficulty");
+
+	/**
+	 * With RPG Advanced Difficulty installed, horde mobs are more likely to spawn as champions, and later Blood
+	 * Moons favour higher tiers. That mod reads these entity tags when it rolls the champion tier (which happens
+	 * as the mob is added to the level, after this), so there's no code dependency either way.
+	 */
+	private static void tagChampionOdds(final Mob mob, final int bloodMoonLevel) {
+		BloodMoonConfig config = BloodMoonConfig.get();
+		mob.addTag("rpgadvanceddifficulty.champion_chance." + String.format(Locale.ROOT, "%.3f", config.championChanceMultiplier.at(bloodMoonLevel)));
+		mob.addTag("rpgadvanceddifficulty.champion_tier_bonus." + String.format(Locale.ROOT, "%.3f", config.championTierBonus.at(bloodMoonLevel)));
 	}
 
 	/**

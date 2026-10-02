@@ -60,6 +60,12 @@ public class BloodMoonConfig {
 	/** Chance (0-1) a zombie or skeleton spawns wearing extra armor. Higher levels also roll better materials. */
 	public Scaled armorChance = new Scaled(0.0, 0.6);
 
+	// --- RPG Advanced Difficulty compatibility (only used when that mod is installed) ---
+	/** Champion odds multiplier for horde mobs. */
+	public Scaled championChanceMultiplier = new Scaled(1.5, 4.0);
+	/** Extra multiplier per champion tier above 1, so later Blood Moons also bring higher-tier champions. */
+	public Scaled championTierBonus = new Scaled(1.0, 1.35);
+
 	// --- Unlocks: the Blood Moon number each ability switches on ---
 	public int zombiesPlaceBlocksFromLevel = 1;
 	public int zombiesBreakBlocksFromLevel = 3;

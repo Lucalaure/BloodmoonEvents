@@ -63,6 +63,17 @@ At one Blood Moon every 7 nights, #10 lands on night 70. That's about 23 hours o
 - `slimeJumpMultiplier`, `creeperBreachDistance`
 - `onlyHordeMobsUpgraded`: set it to false to give the AI to every mob during a Blood Moon
 
+## Compatibility
+
+**[RPG Advanced Difficulty](https://github.com/Lucalaure/rpgAdvancedDifficulty)** (optional): when it's installed, Blood Moon horde mobs are more likely to spawn as champions, and later Blood Moons favour higher tiers:
+
+| | Blood Moon #1 | #5 | #10 |
+| --- | --- | --- | --- |
+| Champion odds (`championChanceMultiplier`) | ×1.5 | ×2.6 | ×4 |
+| Extra per tier above 1 (`championTierBonus`) | ×1 | ×1.16 | ×1.35 |
+
+This works through entity tags (`rpgadvanceddifficulty.champion_chance.<n>` and `rpgadvanceddifficulty.champion_tier_bonus.<n>`), so neither mod needs the other to build or run. Only horde mobs are affected.
+
 ## Building
 
 Requires JDK 25.

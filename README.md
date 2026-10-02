@@ -70,9 +70,11 @@ At one Blood Moon every 7 nights, #10 lands on night 70. That's about 23 hours o
 | | Blood Moon #1 | #5 | #10 |
 | --- | --- | --- | --- |
 | Champion odds (`championChanceMultiplier`) | ×1.5 | ×2.6 | ×4 |
-| Extra per tier above 1 (`championTierBonus`) | ×1 | ×1.16 | ×1.35 |
+| Tier gap closed (`championTierGap`) | 0 | 0.09 | 0.2 |
 
-This works through entity tags (`rpgadvanceddifficulty.champion_chance.<n>` and `rpgadvanceddifficulty.champion_tier_bonus.<n>`), so neither mod needs the other to build or run. Only horde mobs are affected.
+The tier gap makes higher tiers proportionally more common without ever overtaking the tier below. Each tier closes that fraction of its odds gap to tier 1, so the rarest tiers gain the most. With RPG Advanced Difficulty's default weights, at #10 tier 5 goes from a third as common as tier 4 to about 40%. Per 100 horde mobs at #10, that's roughly 9 tier 1, 6 tier 2, 3.5 tier 3, 1.6 tier 4 and 0.65 tier 5 champions, before that mod's own distance/time scaling.
+
+This works through entity tags (`rpgadvanceddifficulty.champion_chance.<n>` and `rpgadvanceddifficulty.champion_tier_gap.<n>`), so neither mod needs the other to build or run. Only horde mobs are affected. Versions of RPG Advanced Difficulty without tier-gap support simply ignore that tag.
 
 ## Building
 

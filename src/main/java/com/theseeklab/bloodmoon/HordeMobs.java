@@ -80,7 +80,10 @@ public final class HordeMobs {
 	private static void tagChampionOdds(final Mob mob, final int bloodMoonLevel) {
 		BloodMoonConfig config = BloodMoonConfig.get();
 		mob.addTag("rpgadvanceddifficulty.champion_chance." + String.format(Locale.ROOT, "%.3f", config.championChanceMultiplier.at(bloodMoonLevel)));
-		mob.addTag("rpgadvanceddifficulty.champion_tier_bonus." + String.format(Locale.ROOT, "%.3f", config.championTierBonus.at(bloodMoonLevel)));
+		double tierGap = config.championTierGap.at(bloodMoonLevel);
+		if (tierGap > 0.0) {
+			mob.addTag("rpgadvanceddifficulty.champion_tier_gap." + String.format(Locale.ROOT, "%.3f", tierGap));
+		}
 	}
 
 	/**

@@ -3,12 +3,15 @@ package com.theseeklab.bloodmoon.test;
 import com.theseeklab.bloodmoon.BloodMoonEnvironment;
 import com.theseeklab.bloodmoon.BloodMoonManager;
 import com.theseeklab.bloodmoon.HordeMobs;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.MinecraftServer;
@@ -79,6 +82,7 @@ public class BloodMoonClientGameTest implements FabricClientGameTest {
 			check(LEVEL_ONE_MOBS.containsAll(rosterOne), "#1 horde is only zombies, skeletons and spiders " + rosterOne);
 			check(shellAfter == shellBefore, "#1 zombies did not break any blocks");
 			check(server.computeOnServer(s -> countArmored(s)) == 0, "#1 horde has no extra armor");
+			checkChampionCompat(server, "#1", "1.500");
 
 			// Stranded on a tower: #1 zombies should still build their way up.
 			resetArena(server, center);
@@ -138,6 +142,7 @@ public class BloodMoonClientGameTest implements FabricClientGameTest {
 			check(maxHorde > 12, "#10 horde is bigger than #1's cap (" + maxHorde + ")");
 			check(!LEVEL_ONE_MOBS.containsAll(rosterTen), "#10 horde includes mobs locked at #1 " + rosterTen);
 			check(server.computeOnServer(s -> countArmored(s)) > 0 || maxHorde == 0, "#10 horde includes armored mobs");
+			checkChampionCompat(server, "#10", "4.000");
 			check(broken > 0, "#10 horde broke into the box (" + broken + " blocks gone)");
 
 			endAtDawn(context, server);
@@ -163,6 +168,88 @@ public class BloodMoonClientGameTest implements FabricClientGameTest {
 	private static String fill(final BlockPos c, final int x1, final int y1, final int z1, final int x2, final int y2, final int z2, final String block) {
 		return String.format("fill %d %d %d %d %d %d %s",
 			c.getX() + x1, c.getY() + y1, c.getZ() + z1, c.getX() + x2, c.getY() + y2, c.getZ() + z2, block);
+	}
+
+	/**
+	 * With RPG Advanced Difficulty installed, horde mobs carry its champion-odds tags and some become champions.
+	 * Uses reflection so this test still compiles and runs without that mod.
+	 */
+	private static void checkChampionCompat(final TestServerContext server, final String label, final String expectedChance) {
+		if (!FabricLoader.getInstance().isModLoaded("rpgadvanceddifficulty")) {
+			return;
+		}
+		String result = server.computeOnServer(s -> {
+			int horde = 0;
+			int tagged = 0;
+			Map<Integer, Integer> tiers = new TreeMap<>();
+			for (Entity entity : s.overworld().getAllEntities()) {
+				if (!HordeMobs.isHorde(entity)) {
+					continue;
+				}
+				horde++;
+				if (entity.entityTags().contains("rpgadvanceddifficulty.champion_chance." + expectedChance)) {
+					tagged++;
+				}
+				try {
+					int tier = (int) entity.getClass().getMethod("champions$getChampionTier").invoke(entity);
+					tiers.merge(tier, 1, Integer::sum);
+				} catch (ReflectiveOperationException e) {
+					throw new IllegalStateException(e);
+				}
+			}
+			return horde + ";" + tagged + ";" + tiers;
+		});
+		String[] parts = result.split(";");
+		LOGGER.info("{} champions: {} horde mobs, {} with x{} odds tag, mobs per champion tier {}", label, parts[0], parts[1], expectedChance, parts[2]);
+		check(parts[0].equals(parts[1]), label + " every horde mob carries the champion odds tag x" + expectedChance);
+		// The exact tier odds that mod computes for a horde zombie right now: each tier must stay rarer than the one below.
+		String odds = server.computeOnServer(s -> {
+			for (Entity entity : s.overworld().getAllEntities()) {
+				if (HordeMobs.isHorde(entity) && entity instanceof Zombie zombie) {
+					return tierOdds(zombie);
+				}
+			}
+			return "";
+		});
+		LOGGER.info("{} exact tier odds for a horde zombie: {}", label, odds);
+		if (!odds.isEmpty()) {
+			String[] percent = odds.split(" ");
+			for (int tier = 2; tier < percent.length; tier++) {
+				check(Double.parseDouble(percent[tier]) < Double.parseDouble(percent[tier - 1]),
+					label + " tier " + tier + " stays rarer than tier " + (tier - 1));
+			}
+		}
+	}
+
+	/** Chance of each champion tier (0-5, in %) for this mob, using RPG Advanced Difficulty's own weighting code. */
+	private static String tierOdds(final Mob mob) {
+		try {
+			Class<?> rank = Class.forName("crystal.champions.util.ChampionRank");
+			Class<?> modes = Class.forName("net.rpgadvanceddifficulty.DifficultyModes");
+			Class<?> tags = Class.forName("net.rpgadvanceddifficulty.ChampionTags");
+			java.lang.reflect.Method modeMultiplier = modes.getMethod("tierMultiplier", net.minecraft.world.level.Level.class, int.class);
+			java.lang.reflect.Method tagMultiplier = tags.getMethod("tierMultiplier", Mob.class, int.class);
+			java.util.function.IntToDoubleFunction multiplier = tier -> {
+				try {
+					return (double) modeMultiplier.invoke(null, mob.level(), tier) * (double) tagMultiplier.invoke(null, mob, tier);
+				} catch (ReflectiveOperationException e) {
+					throw new IllegalStateException(e);
+				}
+			};
+			double[] weights = (double[]) rank.getMethod("tierWeights", double.class, double.class, double.class, int.class, java.util.function.IntToDoubleFunction.class)
+				.invoke(null, 0.0, 1.0, 12.0, Integer.MAX_VALUE, multiplier);
+			double total = 0;
+			for (double weight : weights) {
+				total += weight;
+			}
+			StringBuilder out = new StringBuilder();
+			for (double weight : weights) {
+				out.append(String.format(java.util.Locale.ROOT, "%.3f ", weight / total * 100.0));
+			}
+			return out.toString().trim();
+		} catch (ReflectiveOperationException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	private static void sealInBox(final TestServerContext server) {

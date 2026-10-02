@@ -63,8 +63,11 @@ public class BloodMoonConfig {
 	// --- RPG Advanced Difficulty compatibility (only used when that mod is installed) ---
 	/** Champion odds multiplier for horde mobs. */
 	public Scaled championChanceMultiplier = new Scaled(1.5, 4.0);
-	/** Extra multiplier per champion tier above 1, so later Blood Moons also bring higher-tier champions. */
-	public Scaled championTierBonus = new Scaled(1.0, 1.35);
+	/**
+	 * Fraction (0-0.95) of each champion tier's odds gap to tier 1 that is closed, so higher tiers get proportionally
+	 * more common (the rarest gain the most) but never as common as the tier below them.
+	 */
+	public Scaled championTierGap = new Scaled(0.0, 0.2);
 
 	// --- Unlocks: the Blood Moon number each ability switches on ---
 	public int zombiesPlaceBlocksFromLevel = 1;

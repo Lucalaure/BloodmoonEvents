@@ -22,6 +22,9 @@ import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.clock.WorldClocks;
@@ -109,7 +112,21 @@ public class BloodMoonClientGameTest implements FabricClientGameTest {
 			check(placed > 0, "#1 zombies placed blocks (" + placed + ")");
 			check(reached, "#1 a zombie built its way up to the player");
 
+			// A horde zombie "picks up" a dead player's sword (same flags vanilla sets on pickup): it must survive dawn.
+			check(server.computeOnServer(s -> {
+				for (Entity entity : s.overworld().getAllEntities()) {
+					if (entity instanceof Zombie zombie && HordeMobs.isHorde(zombie)) {
+						zombie.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND_SWORD));
+						zombie.setGuaranteedDrop(EquipmentSlot.MAINHAND);
+						return true;
+					}
+				}
+				return false;
+			}), "#1 a horde zombie is holding a picked-up diamond sword");
+
 			endAtDawn(context, server);
+			check(server.computeOnServer(s -> countDroppedItems(s, stack -> stack.is(Items.DIAMOND_SWORD))) == 1,
+				"#1 the picked-up sword was dropped at dawn, not deleted");
 			check(server.computeOnServer(s -> BloodMoonManager.state(s).nextLevel()) == 2, "next Blood Moon is #2");
 
 			// ---------- Blood Moon #10 ----------
@@ -145,7 +162,10 @@ public class BloodMoonClientGameTest implements FabricClientGameTest {
 			checkChampionCompat(server, "#10", "4.000");
 			check(broken > 0, "#10 horde broke into the box (" + broken + " blocks gone)");
 
+			int armorBefore = server.computeOnServer(s -> countDroppedItems(s, BloodMoonClientGameTest::isArmor));
 			endAtDawn(context, server);
+			check(server.computeOnServer(s -> countDroppedItems(s, BloodMoonClientGameTest::isArmor)) == armorBefore,
+				"#10 horde armor did not drop at dawn");
 			check(server.computeOnServer(s -> BloodMoonManager.state(s).nextLevel()) == 11, "next Blood Moon is #11");
 			context.waitTicks(120);
 			check(BloodMoonEnvironment.clientIntensity <= 0.0F, "client sky faded back out");
@@ -320,6 +340,21 @@ public class BloodMoonClientGameTest implements FabricClientGameTest {
 			}
 		}
 		return count;
+	}
+
+	private static int countDroppedItems(final MinecraftServer server, final java.util.function.Predicate<ItemStack> filter) {
+		int count = 0;
+		for (Entity entity : server.overworld().getAllEntities()) {
+			if (entity instanceof ItemEntity item && filter.test(item.getItem())) {
+				count += item.getItem().getCount();
+			}
+		}
+		return count;
+	}
+
+	private static boolean isArmor(final ItemStack stack) {
+		String id = BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath();
+		return id.endsWith("_helmet") || id.endsWith("_chestplate") || id.endsWith("_leggings") || id.endsWith("_boots");
 	}
 
 	private static int countBlock(final MinecraftServer server, final BlockPos center, final Block block) {

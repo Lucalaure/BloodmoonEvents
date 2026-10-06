@@ -86,7 +86,10 @@ public class BloodMoonConfig {
 	public int maxSpawnDistance = 44;
 	/** Also spawn the horde in caves when the player is underground. */
 	public boolean spawnUnderground = true;
-	/** Horde mobs are removed at dawn when the Blood Moon ends. */
+	/**
+	 * Horde mobs are removed at dawn when the Blood Moon ends, after dropping anything they picked up (such as a
+	 * dead player's gear). When false they stay as ordinary mobs that can despawn naturally.
+	 */
 	public boolean despawnAtDawn = true;
 	/** Flat movement speed bonus for every horde mob (0.1 = +10%). Does not scale with level. */
 	public double speedBonus = 0.10;

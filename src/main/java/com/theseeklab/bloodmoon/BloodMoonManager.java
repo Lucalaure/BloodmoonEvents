@@ -167,7 +167,7 @@ public final class BloodMoonManager {
 			syncPlayers(server);
 		}
 
-		HordeMobs.tickPendingRemovals();
+		HordeMobs.tickPendingRetirements();
 		BlockDamageTracker.tick(server);
 	}
 
@@ -220,9 +220,7 @@ public final class BloodMoonManager {
 		BloodmoonEvents.LOGGER.info("Blood Moon #{} ended (completed total: {})", activeLevel, state.completed());
 		syncPlayers(server);
 
-		if (BloodMoonConfig.get().despawnAtDawn) {
-			HordeMobs.despawnAll(server.overworld());
-		}
+		HordeMobs.retireAll(server.overworld());
 
 		broadcast(server, endedByCommand
 			? Component.translatableWithFallback("bloodmoonevents.stopped", "The Blood Moon fades away.").withStyle(ChatFormatting.GRAY)

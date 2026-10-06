@@ -21,6 +21,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
@@ -35,7 +36,7 @@ public final class HordeMobs {
 	public static final String HORDE_TAG = BloodmoonEvents.MOD_ID + ".horde";
 
 	private static final AttributeModifier.Operation MULTIPLY_BASE = AttributeModifier.Operation.ADD_MULTIPLIED_BASE;
-	private static final List<Mob> pendingRemoval = new ArrayList<>();
+	private static final List<Mob> pendingRetire = new ArrayList<>();
 
 	private HordeMobs() {
 	}
@@ -125,10 +126,10 @@ public final class HordeMobs {
 
 		BloodMoonConfig config = BloodMoonConfig.get();
 		boolean horde = isHorde(mob);
-		if (horde && config.despawnAtDawn && !BloodMoonManager.isActive(level)) {
+		if (horde && !BloodMoonManager.isActive(level)) {
 			// A leftover from a Blood Moon that ended while this chunk was unloaded.
-			// Removing during the load callback is unsafe, so do it on the next tick.
-			pendingRemoval.add(mob);
+			// Changing or removing entities during the load callback is unsafe, so do it on the next tick.
+			pendingRetire.add(mob);
 			return;
 		}
 		if (!horde && config.onlyHordeMobsUpgraded) {
@@ -160,12 +161,12 @@ public final class HordeMobs {
 		return selector.getAvailableGoals().stream().anyMatch(wrapped -> type.isInstance(wrapped.getGoal()));
 	}
 
-	public static void tickPendingRemovals() {
-		if (pendingRemoval.isEmpty()) {
+	public static void tickPendingRetirements() {
+		if (pendingRetire.isEmpty()) {
 			return;
 		}
-		List<Mob> mobs = new ArrayList<>(pendingRemoval);
-		pendingRemoval.clear();
+		List<Mob> mobs = new ArrayList<>(pendingRetire);
+		pendingRetire.clear();
 		for (Mob mob : mobs) {
 			if (mob.isRemoved() || !(mob.level() instanceof ServerLevel level)) {
 				continue;
@@ -174,22 +175,69 @@ public final class HordeMobs {
 				// Loaded while the world was starting up, before the Blood Moon state was evaluated.
 				onEntityLoad(mob, level);
 			} else {
-				mob.discard();
+				retire(mob, level);
 			}
 		}
 	}
 
-	/** Removes every loaded horde mob with a puff of smoke. */
-	public static void despawnAll(final ServerLevel level) {
-		List<Entity> horde = new ArrayList<>();
+	/** Called at dawn: every loaded horde mob is retired. */
+	public static void retireAll(final ServerLevel level) {
+		List<Mob> horde = new ArrayList<>();
 		for (Entity entity : level.getAllEntities()) {
-			if (isHorde(entity)) {
-				horde.add(entity);
+			if (entity instanceof Mob mob && isHorde(mob)) {
+				horde.add(mob);
 			}
 		}
-		for (Entity entity : horde) {
-			level.sendParticles(ParticleTypes.LARGE_SMOKE, entity.getX(), entity.getY() + entity.getBbHeight() / 2, entity.getZ(), 8, 0.3, 0.4, 0.3, 0.02);
-			entity.discard();
+		for (Mob mob : horde) {
+			retire(mob, level);
 		}
+	}
+
+	/**
+	 * Ends a horde mob's Blood Moon. Anything it picked up (often a dead player's gear) is always dropped or kept,
+	 * never deleted. With despawnAtDawn the mob then vanishes in a puff of smoke; otherwise it becomes an ordinary
+	 * mob that can despawn naturally again.
+	 */
+	private static void retire(final Mob mob, final ServerLevel level) {
+		if (BloodMoonConfig.get().despawnAtDawn) {
+			dropPickedUpItems(mob, level);
+			level.sendParticles(ParticleTypes.LARGE_SMOKE, mob.getX(), mob.getY() + mob.getBbHeight() / 2, mob.getZ(), 8, 0.3, 0.4, 0.3, 0.02);
+			mob.discard();
+			return;
+		}
+
+		mob.removeTag(HORDE_TAG);
+		if (!holdsPickedUpItems(mob)) {
+			// Holding picked-up items keeps a mob persistent, same as vanilla.
+			((MobAccessor) mob).bloodmoon$setPersistenceRequired(false);
+		}
+	}
+
+	/**
+	 * Drops every item the mob picked up from the ground. Vanilla marks those slots as guaranteed drops; the armor
+	 * this mod hands out has a drop chance of 0, so it is not affected. Dropped stacks get the extended item lifetime
+	 * so a player who just respawned has time to get back to them.
+	 */
+	private static void dropPickedUpItems(final Mob mob, final ServerLevel level) {
+		for (EquipmentSlot slot : EquipmentSlot.VALUES) {
+			ItemStack stack = mob.getItemBySlot(slot);
+			if (stack.isEmpty() || !mob.getDropChances().isPreserved(slot)) {
+				continue;
+			}
+			mob.setItemSlot(slot, ItemStack.EMPTY);
+			ItemEntity drop = mob.spawnAtLocation(level, stack);
+			if (drop != null) {
+				drop.setExtendedLifetime();
+			}
+		}
+	}
+
+	private static boolean holdsPickedUpItems(final Mob mob) {
+		for (EquipmentSlot slot : EquipmentSlot.VALUES) {
+			if (!mob.getItemBySlot(slot).isEmpty() && mob.getDropChances().isPreserved(slot)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

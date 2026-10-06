@@ -12,4 +12,7 @@ public interface MobAccessor {
 
 	@Accessor("targetSelector")
 	GoalSelector bloodmoon$getTargetSelector();
+
+	@Accessor("persistenceRequired")
+	void bloodmoon$setPersistenceRequired(boolean persistenceRequired);
 }

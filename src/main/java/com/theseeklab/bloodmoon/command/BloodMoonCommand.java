@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.theseeklab.bloodmoon.BloodMoonManager;
 import com.theseeklab.bloodmoon.config.BloodMoonConfig;
+import java.util.function.Predicate;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -17,6 +18,8 @@ import net.minecraft.server.MinecraftServer;
  * /bloodmoon reload   - ops: reload config/bloodmoonevents.json
  */
 public final class BloodMoonCommand {
+	private static final Predicate<CommandSourceStack> OPS = source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS);
+
 	private BloodMoonCommand() {
 	}
 
@@ -25,21 +28,21 @@ public final class BloodMoonCommand {
 			.executes(c -> status(c.getSource()))
 			.then(Commands.literal("status").executes(c -> status(c.getSource())))
 			.then(Commands.literal("start")
-				.requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+				.requires(OPS)
 				.executes(c -> {
 					BloodMoonManager.forceStart(c.getSource().getServer());
 					c.getSource().sendSuccess(() -> Component.literal("Summoning a Blood Moon..."), true);
 					return 1;
 				}))
 			.then(Commands.literal("stop")
-				.requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+				.requires(OPS)
 				.executes(c -> {
 					BloodMoonManager.forceStop(c.getSource().getServer());
 					c.getSource().sendSuccess(() -> Component.literal("Tonight's Blood Moon has been cancelled."), true);
 					return 1;
 				}))
 			.then(Commands.literal("level")
-				.requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+				.requires(OPS)
 				.then(Commands.argument("level", IntegerArgumentType.integer(1))
 					.executes(c -> {
 						int level = IntegerArgumentType.getInteger(c, "level");
@@ -50,7 +53,7 @@ public final class BloodMoonCommand {
 						return level;
 					})))
 			.then(Commands.literal("reload")
-				.requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+				.requires(OPS)
 				.executes(c -> {
 					BloodMoonConfig.load();
 					c.getSource().sendSuccess(() -> Component.literal("Blood Moon config reloaded."), true);

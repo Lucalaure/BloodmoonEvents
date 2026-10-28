@@ -22,7 +22,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.GameRules;
 
 /**
  * Server-side brain of the mod: decides when a Blood Moon is active, announces it, drives horde spawning
@@ -84,15 +84,15 @@ public final class BloodMoonManager {
 	}
 
 	public static BloodMoonState state(final MinecraftServer server) {
-		return server.getDataStorage().computeIfAbsent(BloodMoonState.TYPE);
+		return server.overworld().getDataStorage().computeIfAbsent(BloodMoonState.FACTORY, BloodMoonState.FILE_ID);
 	}
 
 	public static long currentDay(final ServerLevel overworld) {
-		return overworld.getOverworldClockTime() / TICKS_PER_DAY;
+		return overworld.getDayTime() / TICKS_PER_DAY;
 	}
 
 	public static long timeOfDay(final ServerLevel overworld) {
-		return overworld.getOverworldClockTime() % TICKS_PER_DAY;
+		return overworld.getDayTime() % TICKS_PER_DAY;
 	}
 
 	/** Whether the night belonging to {@code day} (day 0 is the first day of the world) is a Blood Moon. */
@@ -254,10 +254,11 @@ public final class BloodMoonManager {
 		endedByCommand = true;
 	}
 
+	/** Same as /time set: every dimension shares the overworld's clock. */
 	private static void setClock(final MinecraftServer server, final long totalTicks) {
-		server.clockManager().setTotalTicks(
-			server.registryAccess().getOrThrow(net.minecraft.world.clock.WorldClocks.OVERWORLD), totalTicks
-		);
+		for (ServerLevel level : server.getAllLevels()) {
+			level.setDayTime(totalTicks);
+		}
 	}
 
 	private static void syncPlayers(final MinecraftServer server) {
@@ -280,6 +281,6 @@ public final class BloodMoonManager {
 	}
 
 	public static boolean mobGriefingAllowed(final ServerLevel level) {
-		return !BloodMoonConfig.get().respectMobGriefing || level.getGameRules().get(GameRules.MOB_GRIEFING);
+		return !BloodMoonConfig.get().respectMobGriefing || level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
 	}
 }

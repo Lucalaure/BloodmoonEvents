@@ -6,7 +6,7 @@ import java.util.List;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 
 /** Describes what becomes new at each Blood Moon level, for the start-of-night announcement. */
@@ -31,7 +31,7 @@ public final class BloodMoonLevels {
 			if (spawn.fromLevel != level || level == 1 || spawn.weight <= 0) {
 				continue;
 			}
-			Identifier id = Identifier.tryParse(spawn.id);
+			ResourceLocation id = ResourceLocation.tryParse(spawn.id);
 			EntityType<?> type = id == null ? null : BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElse(null);
 			if (type == null) {
 				continue;

@@ -1,6 +1,6 @@
 # Bloodmoon Events
 
-A Fabric mod for **Minecraft 26.3**. Every 7th night (configurable) a **Blood Moon** rises. The sky, fog, clouds and light turn red, the moon swells and turns crimson, and nobody can sleep. A horde of mobs with upgraded AI also lays siege to every player until dawn.
+A Fabric mod for **Minecraft 1.21.1** (this is the `1.21.1` branch; `main` targets 26.3). Every 7th night (configurable) a **Blood Moon** rises. The sky, fog, clouds and light turn red, the moon swells and turns crimson, and nobody can sleep. A horde of mobs with upgraded AI also lays siege to every player until dawn.
 
 Inspired by [Seventh Night: Blood Moon](https://www.curseforge.com/minecraft/mc-mods/seventh-night-blood-moon), [Enhanced Celestials](https://github.com/CorgiTaco-MC/Enhanced-Celestials) and [ZombieBreakAndBuild](https://github.com/XTiK555/ZombieBreakAndBuild).
 
@@ -78,20 +78,14 @@ This works through entity tags (`rpgadvanceddifficulty.champion_chance.<n>` and 
 
 ## Building
 
-Requires JDK 25.
+Requires JDK 21.
 
 ```bash
 ./gradlew build                # jar in build/libs/
 ./gradlew runClient            # play in a dev client
-./gradlew runClientGameTest    # automated end-to-end test (opens a game window, ~90 s)
 ```
 
-The automated test lives in `src/gametest`. It plays Blood Moon #1 and #10 in a real client and checks each step:
-- **#1:** red sky, no sleeping, a small horde of only zombies, skeletons and spiders. Zombies leave a sealed box intact but build up a tower to reach the player.
-- **#10:** a horde several times larger, with armoured mobs and the full roster, breaks into the box.
-- **Both:** everything ends at dawn and the counter advances.
-
-Screenshots are saved to `build/run/clientGameTest/screenshots/`.
+The automated client game test from the 26.x branch is not available here: Fabric API's client gametest API doesn't exist for 1.21.1.
 
 ## How it works
 
@@ -104,8 +98,9 @@ Screenshots are saved to `build/run/clientGameTest/screenshots/`.
 | Break/pillar/bridge AI | `ai/BreakAndBuildGoal`, `ai/StuckTracker`, `ai/BlockDamageTracker` |
 | Creeper breach | `ai/CreeperBreachGoal` |
 | Horde targeting through walls | `ai/HordeTargetGoal` |
-| Red sky, fog, light, full moon, no sleeping | `BloodMoonEnvironment` + `mixin/EnvironmentAttributeSystemBuilderMixin` |
-| Red, enlarged moon | `client/mixin/SkyRendererMixin` |
-| Slime jumps | `mixin/AbstractCubeMobMixin` |
+| Red sky, fog, clouds, light, dimmer stars | `BloodMoonEnvironment` + `client/mixin/ClientLevelMixin`, `FogRendererMixin`, `LightTextureMixin` |
+| Red, enlarged, full moon | `client/mixin/LevelRendererMixin` |
+| No sleeping (beds still set spawn) | `mixin/ServerPlayerMixin` |
+| Slime jumps | `ai/SlimeSuperJump` + `mixin/SlimeMixin`, `mixin/MagmaCubeMixin` |
 
-Since 26.x, Minecraft drives the sky colour, fog, moon phase and bed rules through **environment attributes**. The mod adds its own layer to that system for the overworld instead of patching renderers, so the same code covers both the client visuals and the server's no-sleep rule.
+1.21.1 has no environment attribute system (that arrived in 26.x), so this branch patches the sky, fog and lightmap code directly. All the colours and the fade still come from `BloodMoonEnvironment`, the same values the 26.x branch feeds into its attribute layers.

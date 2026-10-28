@@ -1,9 +1,12 @@
 {
 	"required": true,
 	"package": "com.theseeklab.bloodmoon.client.mixin",
-	"compatibilityLevel": "JAVA_25",
+	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"SkyRendererMixin"
+		"ClientLevelMixin",
+		"FogRendererMixin",
+		"LevelRendererMixin",
+		"LightTextureMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

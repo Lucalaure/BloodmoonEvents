@@ -5,20 +5,20 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /** Spawns waves of horde mobs in a ring around each player while a Blood Moon is active. */
 public final class HordeSpawner {
@@ -66,7 +66,7 @@ public final class HordeSpawner {
 			return;
 		}
 
-		Entity entity = type.create(level, EntitySpawnReason.EVENT);
+		Entity entity = type.create(level);
 		if (!(entity instanceof Mob mob)) {
 			if (entity != null) {
 				entity.discard();
@@ -74,8 +74,8 @@ public final class HordeSpawner {
 			return;
 		}
 
-		mob.snapTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, level.getRandom().nextFloat() * 360.0F, 0.0F);
-		mob.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), EntitySpawnReason.EVENT, null);
+		mob.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, level.getRandom().nextFloat() * 360.0F, 0.0F);
+		mob.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.EVENT, null);
 		HordeMobs.prepare(mob, bloodMoonLevel);
 		mob.setTarget(player);
 		level.addFreshEntityWithPassengers(mob);
@@ -90,7 +90,7 @@ public final class HordeSpawner {
 			if (spawn.id == null || spawn.weight <= 0 || spawn.fromLevel > bloodMoonLevel) {
 				continue;
 			}
-			Identifier id = Identifier.tryParse(spawn.id);
+			ResourceLocation id = ResourceLocation.tryParse(spawn.id);
 			if (id == null) {
 				continue;
 			}

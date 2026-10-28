@@ -1,23 +1,14 @@
 package com.theseeklab.bloodmoon;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraft.world.level.saveddata.SavedDataType;
 
-/** Per-world Blood Moon bookkeeping, saved in data/bloodmoonevents/state.dat. */
+/** Per-world Blood Moon bookkeeping, saved in data/bloodmoonevents_state.dat. */
 public class BloodMoonState extends SavedData {
-	public static final Codec<BloodMoonState> CODEC = RecordCodecBuilder.create(
-		i -> i.group(
-				Codec.LONG.optionalFieldOf("forced_day", -1L).forGetter(s -> s.forcedDay),
-				Codec.LONG.optionalFieldOf("skipped_day", -1L).forGetter(s -> s.skippedDay),
-				Codec.INT.optionalFieldOf("completed", 0).forGetter(s -> s.completed),
-				Codec.LONG.optionalFieldOf("last_completed_day", -1L).forGetter(s -> s.lastCompletedDay)
-			)
-			.apply(i, BloodMoonState::new)
-	);
+	public static final String FILE_ID = BloodmoonEvents.MOD_ID + "_state";
 	// Fabric API handles a null DataFixTypes for modded saved data.
-	public static final SavedDataType<BloodMoonState> TYPE = new SavedDataType<>(BloodmoonEvents.id("state"), BloodMoonState::new, CODEC, null);
+	public static final SavedData.Factory<BloodMoonState> FACTORY = new SavedData.Factory<>(BloodMoonState::new, BloodMoonState::load, null);
 
 	/** Day forced to be a Blood Moon by command, or -1. */
 	private long forcedDay;
@@ -36,6 +27,24 @@ public class BloodMoonState extends SavedData {
 		this.skippedDay = skippedDay;
 		this.completed = completed;
 		this.lastCompletedDay = lastCompletedDay;
+	}
+
+	private static BloodMoonState load(final CompoundTag tag, final HolderLookup.Provider registries) {
+		return new BloodMoonState(
+			tag.contains("forced_day") ? tag.getLong("forced_day") : -1L,
+			tag.contains("skipped_day") ? tag.getLong("skipped_day") : -1L,
+			tag.getInt("completed"),
+			tag.contains("last_completed_day") ? tag.getLong("last_completed_day") : -1L
+		);
+	}
+
+	@Override
+	public CompoundTag save(final CompoundTag tag, final HolderLookup.Provider registries) {
+		tag.putLong("forced_day", forcedDay);
+		tag.putLong("skipped_day", skippedDay);
+		tag.putInt("completed", completed);
+		tag.putLong("last_completed_day", lastCompletedDay);
+		return tag;
 	}
 
 	public long forcedDay() {

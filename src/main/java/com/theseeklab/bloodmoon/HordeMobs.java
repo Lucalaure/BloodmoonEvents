@@ -24,8 +24,8 @@ import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
-import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -42,7 +42,7 @@ public final class HordeMobs {
 	}
 
 	public static boolean isHorde(final Entity entity) {
-		return entity.entityTags().contains(HORDE_TAG);
+		return entity.getTags().contains(HORDE_TAG);
 	}
 
 	/** Called for freshly spawned horde mobs before they are added to the level. */
@@ -219,22 +219,27 @@ public final class HordeMobs {
 	 * so a player who just respawned has time to get back to them.
 	 */
 	private static void dropPickedUpItems(final Mob mob, final ServerLevel level) {
-		for (EquipmentSlot slot : EquipmentSlot.VALUES) {
+		for (EquipmentSlot slot : EquipmentSlot.values()) {
 			ItemStack stack = mob.getItemBySlot(slot);
-			if (stack.isEmpty() || !mob.getDropChances().isPreserved(slot)) {
+			if (stack.isEmpty() || !isPreserved(mob, slot)) {
 				continue;
 			}
 			mob.setItemSlot(slot, ItemStack.EMPTY);
-			ItemEntity drop = mob.spawnAtLocation(level, stack);
+			ItemEntity drop = mob.spawnAtLocation(stack);
 			if (drop != null) {
 				drop.setExtendedLifetime();
 			}
 		}
 	}
 
+	/** Vanilla sets a slot's drop chance above 1 when the mob picks an item up, which guarantees it drops. */
+	private static boolean isPreserved(final Mob mob, final EquipmentSlot slot) {
+		return ((MobAccessor) mob).bloodmoon$getEquipmentDropChance(slot) > 1.0F;
+	}
+
 	private static boolean holdsPickedUpItems(final Mob mob) {
-		for (EquipmentSlot slot : EquipmentSlot.VALUES) {
-			if (!mob.getItemBySlot(slot).isEmpty() && mob.getDropChances().isPreserved(slot)) {
+		for (EquipmentSlot slot : EquipmentSlot.values()) {
+			if (!mob.getItemBySlot(slot).isEmpty() && isPreserved(mob, slot)) {
 				return true;
 			}
 		}

@@ -69,7 +69,7 @@ Everything is in `config/bloodmoonevents.json`:
 
 ## Requirements
 
-- Minecraft 26.3, Fabric Loader, **Fabric API**
+- Minecraft 1.21.1 (also available for 26.3), Fabric Loader, **Fabric API**
 - Install on **both client and server**. The server runs the event and the horde, and the client draws the red sky and moon.
 
 Inspired by *Seventh Night: Blood Moon*, *Enhanced Celestials* and *ZombieBreakAndBuild*.

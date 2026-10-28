@@ -1,9 +1,11 @@
 package com.theseeklab.bloodmoon.mixin;
 
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(Mob.class)
 public interface MobAccessor {
@@ -15,4 +17,7 @@ public interface MobAccessor {
 
 	@Accessor("persistenceRequired")
 	void bloodmoon$setPersistenceRequired(boolean persistenceRequired);
+
+	@Invoker("getEquipmentDropChance")
+	float bloodmoon$getEquipmentDropChance(EquipmentSlot slot);
 }

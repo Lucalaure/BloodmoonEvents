@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.1 (Minecraft 1.21.1), 2026-10-28
+
+The first release for Minecraft 1.21.1, ported from 1.0.1 for 26.3. It has the same features, config and commands, and the same config file works on both.
+
+### Differences from the 26.3 version
+- The full moon during a Blood Moon is visual only. On 26.3 the server also treats the night as a full moon, which slightly raises local difficulty and swamp slime spawns. On 1.21.1 those follow the real moon phase.
+
 ## 1.0.1 (Minecraft 26.3), 2026-10-06
 
 ### Fixed

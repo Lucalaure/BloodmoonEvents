@@ -6,7 +6,7 @@ import com.theseeklab.bloodmoon.config.BloodMoonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Lets a mob dig and build its way to its target when walking there is impossible:
@@ -254,7 +254,7 @@ public class BreakAndBuildGoal extends Goal {
 		mob.getLookControl().setLookAt(center.x, center.y, center.z);
 
 		if (breakingTicks++ % 8 == 0) {
-			mob.swingForAttack(InteractionHand.MAIN_HAND);
+			mob.swing(InteractionHand.MAIN_HAND);
 			level.playSound(null, pos, state.getSoundType().getHitSound(), SoundSource.HOSTILE, 0.6F, 0.6F);
 		}
 
@@ -282,7 +282,7 @@ public class BreakAndBuildGoal extends Goal {
 		if (hardness < 0.0F || hardness > config.maxBreakableHardness) {
 			return false;
 		}
-		Identifier id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
+		ResourceLocation id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
 		if (config.unbreakableBlocks.contains(id.toString())) {
 			return false;
 		}
@@ -307,14 +307,14 @@ public class BreakAndBuildGoal extends Goal {
 		BlockState state = buildBlock().defaultBlockState();
 		level.setBlockAndUpdate(pos, state);
 		level.playSound(null, pos, state.getSoundType().getPlaceSound(), SoundSource.HOSTILE, 1.0F, 0.8F);
-		mob.swingForAttack(InteractionHand.MAIN_HAND);
+		mob.swing(InteractionHand.MAIN_HAND);
 		cooldown = Math.max(cooldown, 10);
 		stuckTracker.reset();
 		return true;
 	}
 
 	private static Block buildBlock() {
-		Identifier id = Identifier.tryParse(BloodMoonConfig.get().buildBlock);
+		ResourceLocation id = ResourceLocation.tryParse(BloodMoonConfig.get().buildBlock);
 		Block block = id == null ? null : BuiltInRegistries.BLOCK.getOptional(id).orElse(null);
 		return block == null || block == Blocks.AIR ? Blocks.COBBLESTONE : block;
 	}

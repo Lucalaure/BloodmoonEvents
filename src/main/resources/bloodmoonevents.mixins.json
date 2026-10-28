@@ -1,11 +1,12 @@
 {
 	"required": true,
 	"package": "com.theseeklab.bloodmoon.mixin",
-	"compatibilityLevel": "JAVA_25",
+	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"AbstractCubeMobMixin",
-		"EnvironmentAttributeSystemBuilderMixin",
-		"MobAccessor"
+		"MagmaCubeMixin",
+		"MobAccessor",
+		"ServerPlayerMixin",
+		"SlimeMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

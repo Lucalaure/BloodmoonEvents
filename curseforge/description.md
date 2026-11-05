@@ -23,6 +23,7 @@ The sky turns red, the moon swells to a crimson giant, and nobody can sleep. Unt
   - climb over walls.
   - build steps.
   - bridge gaps.
+  - they build with horde cobblestone, which drops nothing and crumbles away after the Blood Moon, so no permanent blocks are left in your world.
 - **From the 3rd Blood Moon, zombies also break blocks.** They tunnel through walls, doors and ceilings. Harder blocks take longer, and several zombies on one block break it faster.
 - **Creepers breach walls.** If they can't reach you, they light their fuse once they're close enough.
 - **Slimes super-jump** over walls and lunge at you.

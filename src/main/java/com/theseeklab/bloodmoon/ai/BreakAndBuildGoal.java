@@ -2,6 +2,7 @@ package com.theseeklab.bloodmoon.ai;
 
 import com.theseeklab.bloodmoon.BloodMoonManager;
 import com.theseeklab.bloodmoon.HordeMobs;
+import com.theseeklab.bloodmoon.block.ModBlocks;
 import com.theseeklab.bloodmoon.config.BloodMoonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,8 +16,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -304,19 +303,13 @@ public class BreakAndBuildGoal extends Goal {
 			return false;
 		}
 
-		BlockState state = buildBlock().defaultBlockState();
+		BlockState state = ModBlocks.HORDE_COBBLESTONE.defaultBlockState();
 		level.setBlockAndUpdate(pos, state);
 		level.playSound(null, pos, state.getSoundType().getPlaceSound(), SoundSource.HOSTILE, 1.0F, 0.8F);
 		mob.swingForAttack(InteractionHand.MAIN_HAND);
 		cooldown = Math.max(cooldown, 10);
 		stuckTracker.reset();
 		return true;
-	}
-
-	private static Block buildBlock() {
-		Identifier id = Identifier.tryParse(BloodMoonConfig.get().buildBlock);
-		Block block = id == null ? null : BuiltInRegistries.BLOCK.getOptional(id).orElse(null);
-		return block == null || block == Blocks.AIR ? Blocks.COBBLESTONE : block;
 	}
 
 	// --- Helpers ---

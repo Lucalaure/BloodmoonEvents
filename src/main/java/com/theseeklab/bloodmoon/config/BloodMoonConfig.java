@@ -106,8 +106,6 @@ public class BloodMoonConfig {
 	/** Master switches; the unlock levels above still apply when these are on. */
 	public boolean zombiesBreakBlocks = true;
 	public boolean zombiesPlaceBlocks = true;
-	/** Block used when pillaring and bridging. */
-	public String buildBlock = "minecraft:cobblestone";
 	/** Blocks harder than this (obsidian is 50) can never be broken. */
 	public float maxBreakableHardness = 20.0F;
 	public int minBreakTicks = 15;

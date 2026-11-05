@@ -1,5 +1,6 @@
 package com.theseeklab.bloodmoon;
 
+import com.theseeklab.bloodmoon.block.ModBlocks;
 import com.theseeklab.bloodmoon.command.BloodMoonCommand;
 import com.theseeklab.bloodmoon.config.BloodMoonConfig;
 import com.theseeklab.bloodmoon.network.BloodMoonSyncPayload;
@@ -25,6 +26,7 @@ public class BloodmoonEvents implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		BloodMoonConfig.load();
+		ModBlocks.init();
 
 		PayloadTypeRegistry.clientboundPlay().register(BloodMoonSyncPayload.TYPE, BloodMoonSyncPayload.CODEC);
 

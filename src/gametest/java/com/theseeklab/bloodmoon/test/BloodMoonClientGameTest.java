@@ -3,6 +3,7 @@ package com.theseeklab.bloodmoon.test;
 import com.theseeklab.bloodmoon.BloodMoonEnvironment;
 import com.theseeklab.bloodmoon.BloodMoonManager;
 import com.theseeklab.bloodmoon.HordeMobs;
+import com.theseeklab.bloodmoon.block.ModBlocks;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -38,6 +39,7 @@ import org.slf4j.LoggerFactory;
  *   <li>#1: red sky, no sleeping, a small horde of zombies/skeletons/spiders, zombies can build but not break</li>
  *   <li>#10: a much bigger, armored horde with creepers and the rest, which breaks into a sealed box</li>
  * </ul>
+ * Also checks that the cobblestone zombies build with drops nothing and crumbles away after dawn.
  * Run with ./gradlew runClientGameTest; screenshots land in build/run/clientGameTest/screenshots.
  */
 public class BloodMoonClientGameTest implements FabricClientGameTest {
@@ -91,12 +93,12 @@ public class BloodMoonClientGameTest implements FabricClientGameTest {
 			resetArena(server, center);
 			server.runCommand(fill(center, -1, 0, -1, 1, 4, 1, "minecraft:stone_bricks"));
 			server.runCommand(String.format("tp @a %d.5 %d %d.5 0 30", center.getX(), center.getY() + 5, center.getZ()));
-			int cobbleBefore = server.computeOnServer(s -> countBlock(s, center, Blocks.COBBLESTONE));
+			int cobbleBefore = server.computeOnServer(s -> countBlock(s, center, ModBlocks.HORDE_COBBLESTONE));
 			boolean reached = false;
 			int placed = 0;
 			for (int i = 0; i < 24 && !reached; i++) {
 				waitNight(context, server, 200);
-				placed = server.computeOnServer(s -> countBlock(s, center, Blocks.COBBLESTONE)) - cobbleBefore;
+				placed = server.computeOnServer(s -> countBlock(s, center, ModBlocks.HORDE_COBBLESTONE)) - cobbleBefore;
 				reached = server.computeOnServer(s -> {
 					ServerPlayer player = player(s);
 					for (Entity entity : s.overworld().getAllEntities()) {
@@ -106,11 +108,24 @@ public class BloodMoonClientGameTest implements FabricClientGameTest {
 					}
 					return false;
 				});
-				LOGGER.info("#1 tower t={}s: {} cobblestone placed, zombie on top: {}", (i + 1) * 10, placed, reached);
+				LOGGER.info("#1 tower t={}s: {} horde cobblestone placed, zombie on top: {}", (i + 1) * 10, placed, reached);
 			}
 			context.takeScreenshot("3_blood_moon_1_tower");
 			check(placed > 0, "#1 zombies placed blocks (" + placed + ")");
 			check(reached, "#1 a zombie built its way up to the player");
+
+			// The horde's blocks can't be obtained: no item, and breaking one (as the player) drops nothing.
+			check(ModBlocks.HORDE_COBBLESTONE.asItem() == Items.AIR, "horde cobblestone has no item");
+			check(server.computeOnServer(s -> {
+				ServerLevel level = s.overworld();
+				for (BlockPos pos : BlockPos.betweenClosed(center.offset(-16, -2, -16), center.offset(16, 12, 16))) {
+					if (level.getBlockState(pos).is(ModBlocks.HORDE_COBBLESTONE)) {
+						int itemsBefore = countDroppedItems(s, stack -> true);
+						return level.destroyBlock(pos.immutable(), true, player(s)) && countDroppedItems(s, stack -> true) == itemsBefore;
+					}
+				}
+				return false;
+			}), "#1 a player breaking horde cobblestone gets no drops");
 
 			// A horde zombie "picks up" a dead player's sword (same flags vanilla sets on pickup): it must survive dawn.
 			check(server.computeOnServer(s -> {
@@ -128,6 +143,14 @@ public class BloodMoonClientGameTest implements FabricClientGameTest {
 			check(server.computeOnServer(s -> countDroppedItems(s, stack -> stack.is(Items.DIAMOND_SWORD))) == 1,
 				"#1 the picked-up sword was dropped at dawn, not deleted");
 			check(server.computeOnServer(s -> BloodMoonManager.state(s).nextLevel()) == 2, "next Blood Moon is #2");
+
+			// Each horde block re-checks every 1-3 s, so by now every one should have crumbled, without dropping anything.
+			context.waitTicks(80);
+			context.takeScreenshot("4_blood_moon_1_after_dawn");
+			int leftover = server.computeOnServer(s -> countBlock(s, center, ModBlocks.HORDE_COBBLESTONE));
+			check(leftover == 0, "#1 all horde cobblestone crumbled after dawn (" + leftover + " left)");
+			check(server.computeOnServer(s -> countDroppedItems(s, stack -> stack.is(Items.COBBLESTONE))) == 0,
+				"#1 the crumbled blocks dropped nothing");
 
 			// ---------- Blood Moon #10 ----------
 			resetArena(server, center);
@@ -155,7 +178,7 @@ public class BloodMoonClientGameTest implements FabricClientGameTest {
 					break;
 				}
 			}
-			context.takeScreenshot("4_blood_moon_10_siege");
+			context.takeScreenshot("5_blood_moon_10_siege");
 			check(maxHorde > 12, "#10 horde is bigger than #1's cap (" + maxHorde + ")");
 			check(!LEVEL_ONE_MOBS.containsAll(rosterTen), "#10 horde includes mobs locked at #1 " + rosterTen);
 			check(server.computeOnServer(s -> countArmored(s)) > 0 || maxHorde == 0, "#10 horde includes armored mobs");

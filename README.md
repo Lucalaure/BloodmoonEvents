@@ -15,6 +15,7 @@ Inspired by [Seventh Night: Blood Moon](https://www.curseforge.com/minecraft/mc-
   - build steps up to higher ground.
   - bridge gaps.
   - later they also break walls, doors and ceilings and dig down. Harder blocks take longer, and several zombies on one block stack their progress.
+  - they build with **horde cobblestone**, a darker, blood-stained cobblestone. It breaks like cobblestone but drops nothing, has no item, and crumbles away after the Blood Moon, so the horde never leaves permanent blocks in your world.
 - **Creepers** that can't path to you ignite once they're within 8 blocks.
 - **Slimes and magma cubes** jump about 1.8× higher, twice as often, and lunge toward their target.
 - Respects the `mob_griefing` gamerule. Containers (chests, barrels…) and obsidian-tier blocks are never broken.
@@ -59,7 +60,7 @@ At one Blood Moon every 7 nights, #10 lands on night 70. That's about 23 hours o
 - `maxLevel`, plus `{start, end}` pairs for `maxHordePerPlayer`, `mobsPerWave`, `waveIntervalTicks`, `breakTicksPerHardness` and `armorChance`
 - `...FromLevel`: the Blood Moon number each ability unlocks on
 - `hordeSpawns`: a list of `{id, weight, fromLevel}`
-- `builderMobs`, `buildBlock`, `maxBreakableHardness`
+- `builderMobs`, `maxBreakableHardness`
 - `slimeJumpMultiplier`, `creeperBreachDistance`
 - `onlyHordeMobsUpgraded`: set it to false to give the AI to every mob during a Blood Moon
 
@@ -88,6 +89,7 @@ Requires JDK 25.
 
 The automated test lives in `src/gametest`. It plays Blood Moon #1 and #10 in a real client and checks each step:
 - **#1:** red sky, no sleeping, a small horde of only zombies, skeletons and spiders. Zombies leave a sealed box intact but build up a tower to reach the player.
+- **Horde cobblestone:** it has no item, breaking it drops nothing, and every block the zombies placed crumbles away after dawn.
 - **#10:** a horde several times larger, with armoured mobs and the full roster, breaks into the box.
 - **Both:** everything ends at dawn and the counter advances.
 
@@ -102,6 +104,7 @@ Screenshots are saved to `build/run/clientGameTest/screenshots/`.
 | Horde wave spawning | `HordeSpawner` |
 | Tagging horde mobs, armour, attaching AI goals on load | `HordeMobs` |
 | Break/pillar/bridge AI | `ai/BreakAndBuildGoal`, `ai/StuckTracker`, `ai/BlockDamageTracker` |
+| Temporary horde cobblestone | `block/HordeBlock`, `block/ModBlocks` |
 | Creeper breach | `ai/CreeperBreachGoal` |
 | Horde targeting through walls | `ai/HordeTargetGoal` |
 | Red sky, fog, light, full moon, no sleeping | `BloodMoonEnvironment` + `mixin/EnvironmentAttributeSystemBuilderMixin` |

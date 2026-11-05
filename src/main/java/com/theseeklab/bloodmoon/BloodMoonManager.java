@@ -50,6 +50,7 @@ public final class BloodMoonManager {
 		endedByCommand = false;
 		lastWarnedDay = -1L;
 		syncedPlayers.clear();
+		BloodMoonAdvancements.reset();
 	}
 
 	public static void forgetPlayer(final ServerPlayer player) {
@@ -178,6 +179,7 @@ public final class BloodMoonManager {
 
 		if (active) {
 			HordeSpawner.tick(overworld, activeLevel);
+			BloodMoonAdvancements.trackParticipants(overworld);
 		}
 
 		if (++tickCounter % 10 == 0) {
@@ -194,6 +196,7 @@ public final class BloodMoonManager {
 		activeLevel = state(server).nextLevel();
 		endedByCommand = false;
 		BloodmoonEvents.LOGGER.info("Blood Moon #{} started on day {}", activeLevel, day);
+		BloodMoonAdvancements.reset();
 		syncPlayers(server);
 
 		List<Component> unlocks = BloodMoonLevels.unlocksAt(activeLevel);
@@ -233,6 +236,7 @@ public final class BloodMoonManager {
 		BloodMoonState state = state(server);
 		if (!endedByCommand && activeDay >= 0) {
 			state.markCompleted(activeDay);
+			BloodMoonAdvancements.awardSurvivors(server, activeLevel);
 		}
 		BloodmoonEvents.LOGGER.info("Blood Moon #{} ended (completed total: {})", activeLevel, state.completed());
 		syncPlayers(server);

@@ -1,5 +1,6 @@
 package com.theseeklab.bloodmoon.test;
 
+import com.theseeklab.bloodmoon.BloodMoonAdvancements;
 import com.theseeklab.bloodmoon.BloodMoonEnvironment;
 import com.theseeklab.bloodmoon.BloodMoonManager;
 import com.theseeklab.bloodmoon.HordeMobs;
@@ -13,8 +14,10 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -143,6 +146,8 @@ public class BloodMoonClientGameTest implements FabricClientGameTest {
 			check(server.computeOnServer(s -> countDroppedItems(s, stack -> stack.is(Items.DIAMOND_SWORD))) == 1,
 				"#1 the picked-up sword was dropped at dawn, not deleted");
 			check(server.computeOnServer(s -> BloodMoonManager.state(s).nextLevel()) == 2, "next Blood Moon is #2");
+			check(server.computeOnServer(s -> hasAdvancement(s, BloodMoonAdvancements.SURVIVED)), "#1 surviving earned \"Seventh Night\"");
+			check(!server.computeOnServer(s -> hasAdvancement(s, BloodMoonAdvancements.SURVIVED_MAX_LEVEL)), "#1 is not the highest difficulty, so no \"Crimson Dawn\"");
 
 			// Each horde block re-checks every 1-3 s, so by now every one should have crumbled, without dropping anything.
 			context.waitTicks(80);
@@ -190,6 +195,7 @@ public class BloodMoonClientGameTest implements FabricClientGameTest {
 			check(server.computeOnServer(s -> countDroppedItems(s, BloodMoonClientGameTest::isArmor)) == armorBefore,
 				"#10 horde armor did not drop at dawn");
 			check(server.computeOnServer(s -> BloodMoonManager.state(s).nextLevel()) == 11, "next Blood Moon is #11");
+			check(server.computeOnServer(s -> hasAdvancement(s, BloodMoonAdvancements.SURVIVED_MAX_LEVEL)), "#10 surviving the highest difficulty earned \"Crimson Dawn\"");
 			context.waitTicks(120);
 			check(BloodMoonEnvironment.clientIntensity <= 0.0F, "client sky faded back out");
 		}
@@ -332,6 +338,11 @@ public class BloodMoonClientGameTest implements FabricClientGameTest {
 
 	private static ServerPlayer player(final MinecraftServer server) {
 		return server.getPlayerList().getPlayers().getFirst();
+	}
+
+	private static boolean hasAdvancement(final MinecraftServer server, final Identifier id) {
+		AdvancementHolder advancement = server.getAdvancements().get(id);
+		return advancement != null && player(server).getAdvancements().getOrStartProgress(advancement).isDone();
 	}
 
 	private static int countHorde(final MinecraftServer server) {

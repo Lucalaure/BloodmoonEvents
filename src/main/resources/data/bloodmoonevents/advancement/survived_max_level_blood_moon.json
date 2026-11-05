@@ -1,0 +1,25 @@
+{
+	"parent": "bloodmoonevents:survived_blood_moon",
+	"criteria": {
+		"survived": {
+			"trigger": "minecraft:impossible"
+		}
+	},
+	"display": {
+		"icon": {
+			"id": "minecraft:netherite_helmet"
+		},
+		"title": {
+			"translate": "advancements.bloodmoonevents.survived_max_level_blood_moon.title",
+			"fallback": "Crimson Dawn"
+		},
+		"description": {
+			"translate": "advancements.bloodmoonevents.survived_max_level_blood_moon.description",
+			"fallback": "Survive a Blood Moon at the highest difficulty without dying"
+		},
+		"frame": "challenge"
+	},
+	"rewards": {
+		"experience": 100
+	}
+}

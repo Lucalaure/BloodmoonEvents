@@ -2,6 +2,12 @@
 
 ## 1.1.0 (Minecraft 26.3), 2026-11-05
 
+### Added
+- **Two advancements**, granted when a Blood Moon you took part in ends at dawn and you didn't die during it:
+  - **Seventh Night:** survive a Blood Moon.
+  - **Crimson Dawn** (challenge, 100 XP): survive a Blood Moon at the highest difficulty (#10 by default, or your `maxLevel`).
+  - Creative and spectator players can't earn them, and a Blood Moon ended with `/bloodmoon stop` doesn't count.
+
 ### Changed
 - **Zombies now build with horde cobblestone instead of real cobblestone.** It's a darker, blood-stained cobblestone that breaks just like cobblestone, but it drops nothing and has no item, so it can't be collected in survival or creative. After the Blood Moon ends, every block the horde placed crumbles away within a few seconds, so the horde never leaves permanent pillars or bridges in your world. Blocks in chunks that weren't loaded at dawn crumble as soon as the chunk loads again.
 - The `buildBlock` config option is gone, since the horde always builds with horde cobblestone now. Old configs that still have it load fine.

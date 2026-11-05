@@ -19,6 +19,7 @@ Inspired by [Seventh Night: Blood Moon](https://www.curseforge.com/minecraft/mc-
 - **Creepers** that can't path to you ignite once they're within 8 blocks.
 - **Slimes and magma cubes** jump about 1.8× higher, twice as often, and lunge toward their target.
 - Respects the `mob_griefing` gamerule. Containers (chests, barrels…) and obsidian-tier blocks are never broken.
+- **Advancements:** *Seventh Night* for surviving a Blood Moon without dying, and the *Crimson Dawn* challenge for surviving one at the highest difficulty (`maxLevel`).
 
 ## Difficulty progression
 
@@ -90,6 +91,7 @@ Requires JDK 25.
 The automated test lives in `src/gametest`. It plays Blood Moon #1 and #10 in a real client and checks each step:
 - **#1:** red sky, no sleeping, a small horde of only zombies, skeletons and spiders. Zombies leave a sealed box intact but build up a tower to reach the player.
 - **Horde cobblestone:** it has no item, breaking it drops nothing, and every block the zombies placed crumbles away after dawn.
+- **Advancements:** surviving #1 earns *Seventh Night* but not *Crimson Dawn*; surviving #10 earns *Crimson Dawn*.
 - **#10:** a horde several times larger, with armoured mobs and the full roster, breaks into the box.
 - **Both:** everything ends at dawn and the counter advances.
 
@@ -105,6 +107,7 @@ Screenshots are saved to `build/run/clientGameTest/screenshots/`.
 | Tagging horde mobs, armour, attaching AI goals on load | `HordeMobs` |
 | Break/pillar/bridge AI | `ai/BreakAndBuildGoal`, `ai/StuckTracker`, `ai/BlockDamageTracker` |
 | Temporary horde cobblestone | `block/HordeBlock`, `block/ModBlocks` |
+| Survival advancements | `BloodMoonAdvancements` + `data/bloodmoonevents/advancement/` |
 | Creeper breach | `ai/CreeperBreachGoal` |
 | Horde targeting through walls | `ai/HordeTargetGoal` |
 | Red sky, fog, light, full moon, no sleeping | `BloodMoonEnvironment` + `mixin/EnvironmentAttributeSystemBuilderMixin` |

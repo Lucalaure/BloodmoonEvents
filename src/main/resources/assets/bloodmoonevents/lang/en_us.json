@@ -1,4 +1,8 @@
 {
+	"advancements.bloodmoonevents.survived_blood_moon.title": "Seventh Night",
+	"advancements.bloodmoonevents.survived_blood_moon.description": "Survive a Blood Moon until dawn without dying",
+	"advancements.bloodmoonevents.survived_max_level_blood_moon.title": "Crimson Dawn",
+	"advancements.bloodmoonevents.survived_max_level_blood_moon.description": "Survive a Blood Moon at the highest difficulty without dying",
 	"block.bloodmoonevents.horde_cobblestone": "Horde Cobblestone",
 	"bloodmoonevents.warning": "The moon is turning red... the Blood Moon rises tonight.",
 	"bloodmoonevents.subtitle": "The horde is coming",

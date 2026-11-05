@@ -6,6 +6,7 @@ import com.theseeklab.bloodmoon.config.BloodMoonConfig;
 import com.theseeklab.bloodmoon.network.BloodMoonSyncPayload;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -34,6 +35,7 @@ public class BloodmoonEvents implements ModInitializer {
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> BloodMoonManager.reset());
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> BloodMoonManager.forgetPlayer(handler.getPlayer()));
 		ServerEntityEvents.ENTITY_LOAD.register(HordeMobs::onEntityLoad);
+		ServerLivingEntityEvents.AFTER_DEATH.register(BloodMoonAdvancements::onDeath);
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, selection) -> BloodMoonCommand.register(dispatcher));
 	}

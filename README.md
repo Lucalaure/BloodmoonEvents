@@ -19,6 +19,7 @@ Inspired by [Seventh Night: Blood Moon](https://www.curseforge.com/minecraft/mc-
 - **Creepers** that can't path to you ignite once they're within 8 blocks.
 - **Slimes and magma cubes** jump about 1.8× higher, twice as often, and lunge toward their target.
 - Respects the `mob_griefing` gamerule. Containers (chests, barrels…) and obsidian-tier blocks are never broken.
+- **Advancements:** *Seventh Night* for surviving a Blood Moon without dying, and the *Crimson Dawn* challenge for surviving one at the highest difficulty (`maxLevel`).
 
 ## Difficulty progression
 
@@ -98,6 +99,7 @@ The automated client game test from the 26.x branch is not available here: Fabri
 | Tagging horde mobs, armour, attaching AI goals on load | `HordeMobs` |
 | Break/pillar/bridge AI | `ai/BreakAndBuildGoal`, `ai/StuckTracker`, `ai/BlockDamageTracker` |
 | Temporary horde cobblestone | `block/HordeBlock`, `block/ModBlocks` |
+| Survival advancements | `BloodMoonAdvancements` + `data/bloodmoonevents/advancement/` |
 | Creeper breach | `ai/CreeperBreachGoal` |
 | Horde targeting through walls | `ai/HordeTargetGoal` |
 | Red sky, fog, clouds, light, dimmer stars | `BloodMoonEnvironment` + `client/mixin/ClientLevelMixin`, `FogRendererMixin`, `LightTextureMixin` |

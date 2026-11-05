@@ -29,6 +29,11 @@ The sky turns red, the moon swells to a crimson giant, and nobody can sleep. Unt
 - **Slimes super-jump** over walls and lunge at you.
 - Respects the `mob_griefing` gamerule. Chests and other containers, and obsidian-tier blocks, are never broken.
 
+### Advancements
+
+- **Seventh Night:** survive a Blood Moon until dawn without dying.
+- **Crimson Dawn** (challenge): survive a Blood Moon at the highest difficulty without dying.
+
 ## It gets harder
 
 Mob health, damage and speed never change. What grows is how many mobs come, what they are, what they wear and what they can do.

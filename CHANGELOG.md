@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.0 (Minecraft 26.3), 2026-11-05
 
 ### Changed
 - **Zombies now build with horde cobblestone instead of real cobblestone.** It's a darker, blood-stained cobblestone that breaks just like cobblestone, but it drops nothing and has no item, so it can't be collected in survival or creative. After the Blood Moon ends, every block the horde placed crumbles away within a few seconds, so the horde never leaves permanent pillars or bridges in your world. Blocks in chunks that weren't loaded at dawn crumble as soon as the chunk loads again.

@@ -138,13 +138,30 @@ public final class BloodMoonManager {
 		return -1;
 	}
 
+	/**
+	 * Whether a Blood Moon is running in this level or is due right now. Unlike {@link #isActive(Level)}, this is
+	 * already true on the first tick after a restart mid-Blood Moon, before {@link #tick} has started it again.
+	 */
+	public static boolean isBloodMoonNow(final ServerLevel level) {
+		if (level.dimension() != Level.OVERWORLD) {
+			return false;
+		}
+		ServerLevel overworld = level.getServer().overworld();
+		return active || isDue(level.getServer(), currentDay(overworld), timeOfDay(overworld));
+	}
+
+	private static boolean isDue(final MinecraftServer server, final long day, final long tod) {
+		BloodMoonConfig config = BloodMoonConfig.get();
+		return tod >= config.startTime && tod < config.endTime && isBloodMoonNight(server, day);
+	}
+
 	public static void tick(final MinecraftServer server) {
 		BloodMoonConfig config = BloodMoonConfig.get();
 		ServerLevel overworld = server.overworld();
 		long day = currentDay(overworld);
 		long tod = timeOfDay(overworld);
 		boolean tonight = isBloodMoonNight(server, day);
-		boolean shouldBeActive = tonight && tod >= config.startTime && tod < config.endTime;
+		boolean shouldBeActive = isDue(server, day, tod);
 
 		if (shouldBeActive && !active) {
 			start(server, day);

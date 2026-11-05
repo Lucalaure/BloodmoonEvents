@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- **Zombies now build with horde cobblestone instead of real cobblestone.** It's a darker, blood-stained cobblestone that breaks just like cobblestone, but it drops nothing and has no item, so it can't be collected in survival or creative. After the Blood Moon ends, every block the horde placed crumbles away within a few seconds, so the horde never leaves permanent pillars or bridges in your world. Blocks in chunks that weren't loaded at dawn crumble as soon as the chunk loads again.
+- The `buildBlock` config option is gone, since the horde always builds with horde cobblestone now. Old configs that still have it load fine.
+
 ## 1.0.1 (Minecraft 1.21.1), 2026-10-28
 
 The first release for Minecraft 1.21.1, ported from 1.0.1 for 26.3. It has the same features, config and commands, and the same config file works on both.

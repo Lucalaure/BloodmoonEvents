@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.2.0 (Minecraft 26.3), 2026-11-18
+
+### Added
+- **Optional: blocks the horde breaks come back after the Blood Moon.** It's off by default, so the horde's griefing stays permanent. Turn on `restoreBrokenBlocks` in the config to protect builds. When it's on, a few seconds after dawn, once the horde cobblestone has crumbled, every block zombies dug out or horde creepers blew up reappears, a few at a time and lowest first. Blocks in chunks that weren't loaded at dawn come back when the chunk loads, and restarts don't lose them.
+  - Those blocks drop nothing when the horde breaks them, so a Blood Moon can't be farmed.
+  - Doors and beds come back whole. Signs and banners keep their text and patterns.
+  - Containers come back empty, because their contents spill out when they break, as before. Shulker boxes drop normally with their contents and aren't restored.
+  - Only blocks that were there before the Blood Moon started come back. Blocks players place during the night, such as emergency walls and pillars, break and drop like normal blocks.
+  - If you built over a hole before dawn, your block stays and the original drops as an item instead. A block won't reappear where a player or mob is standing; it waits until the spot is clear.
+- New config options:
+  - `restoreBrokenBlocks` (default `false`). Set it to `true` to turn the feature on. While it's off, `dropBrokenBlocks` decides drops as before.
+  - `restoreOnlyPreexistingBlocks` (default `true`). Only matters when restoring is on. Set it to `false` to also restore blocks players placed during the Blood Moon.
+
 ## 1.1.0 (Minecraft 26.3), 2026-11-05
 
 ### Added

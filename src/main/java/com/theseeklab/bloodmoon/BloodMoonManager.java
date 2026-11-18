@@ -3,6 +3,7 @@ package com.theseeklab.bloodmoon;
 import com.theseeklab.bloodmoon.ai.BlockDamageTracker;
 import com.theseeklab.bloodmoon.config.BloodMoonConfig;
 import com.theseeklab.bloodmoon.network.BloodMoonSyncPayload;
+import com.theseeklab.bloodmoon.restore.BrokenBlockRestorer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,7 @@ public final class BloodMoonManager {
 		lastWarnedDay = -1L;
 		syncedPlayers.clear();
 		BloodMoonAdvancements.reset();
+		BrokenBlockRestorer.reset();
 	}
 
 	public static void forgetPlayer(final ServerPlayer player) {
@@ -188,6 +190,7 @@ public final class BloodMoonManager {
 
 		HordeMobs.tickPendingRetirements();
 		BlockDamageTracker.tick(server);
+		BrokenBlockRestorer.tick(server);
 	}
 
 	private static void start(final MinecraftServer server, final long day) {

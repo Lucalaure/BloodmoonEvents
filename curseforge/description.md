@@ -18,12 +18,8 @@ The sky turns red, the moon swells to a crimson giant, and nobody can sleep. Unt
 
 ### Smarter mobs
 
-- **Zombies build their way to you.** They:
-  - pillar up to players above them.
-  - climb over walls.
-  - build steps.
-  - bridge gaps.
-  - they build with horde cobblestone, which drops nothing and crumbles away after the Blood Moon, so no permanent blocks are left in your world.
+- **Zombies build their way to you.** They pillar up to players above them, climb over walls, build steps and bridge gaps.
+- **Nothing they build stays.** Zombies build with **horde cobblestone**, which drops nothing and crumbles away after the Blood Moon, so no permanent pillars or bridges are left in your world.
 - **From the 3rd Blood Moon, zombies also break blocks.** They tunnel through walls, doors and ceilings. Harder blocks take longer, and several zombies on one block break it faster.
 - **Optional: the damage heals at dawn.** Turn on `restoreBrokenBlocks` in the config and every block the horde broke, whether dug out by zombies or blown up by creepers, reappears a few seconds after the Blood Moon ends. Those blocks drop nothing, so the horde can't be farmed. Only your existing builds are protected: blocks you place during the fight break and drop normally.
 - **Creepers breach walls.** If they can't reach you, they light their fuse once they're close enough.
@@ -69,6 +65,7 @@ Everything is in `config/bloodmoonevents.json`:
 - every difficulty value (start and end)
 - the Blood Moon each ability unlocks on
 - toggles for each AI behaviour
+- optional build protection: `restoreBrokenBlocks` (off by default) makes horde damage heal at dawn, and `restoreOnlyPreexistingBlocks` (on by default) limits that to blocks that were there before the Blood Moon
 
 ## Compatibility
 
@@ -76,7 +73,8 @@ Everything is in `config/bloodmoonevents.json`:
 
 ## Requirements
 
-- Minecraft 26.3, Fabric Loader, **Fabric API**
+- Minecraft **26.3** (Java 25) or **1.21.1** (Java 21), as separate downloads
+- Fabric Loader and **Fabric API**
 - Install on **both client and server**. The server runs the event and the horde, and the client draws the red sky and moon.
 
 Inspired by *Seventh Night: Blood Moon*, *Enhanced Celestials* and *ZombieBreakAndBuild*.

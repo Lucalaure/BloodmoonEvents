@@ -244,7 +244,12 @@ public final class BrokenBlockRestorer {
 	private static Outcome restoreGroup(final ServerLevel level, final List<BrokenBlocksState.Entry> group, final boolean force) {
 		BrokenBlocksState.Entry first = group.getFirst();
 		for (BrokenBlocksState.Entry member : group) {
-			if (!isFree(level.getBlockState(member.pos()))) {
+			BlockState current = level.getBlockState(member.pos());
+			if (current.is(member.state().getBlock())) {
+				// The same block is already back (put there by a player, or it never actually broke). Nothing to do.
+				return Outcome.BLOCKED;
+			}
+			if (!isFree(current)) {
 				// The player built here since. Leave their block and hand the original back as an item.
 				ItemStack item = new ItemStack(first.state().getBlock().asItem());
 				if (!item.is(Items.AIR)) {

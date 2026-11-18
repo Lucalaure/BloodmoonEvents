@@ -25,6 +25,7 @@ The sky turns red, the moon swells to a crimson giant, and nobody can sleep. Unt
   - bridge gaps.
   - they build with horde cobblestone, which drops nothing and crumbles away after the Blood Moon, so no permanent blocks are left in your world.
 - **From the 3rd Blood Moon, zombies also break blocks.** They tunnel through walls, doors and ceilings. Harder blocks take longer, and several zombies on one block break it faster.
+- **Optional: the damage heals at dawn.** Turn on `restoreBrokenBlocks` in the config and every block the horde broke, whether dug out by zombies or blown up by creepers, reappears a few seconds after the Blood Moon ends. Those blocks drop nothing, so the horde can't be farmed. Only your existing builds are protected: blocks you place during the fight break and drop normally.
 - **Creepers breach walls.** If they can't reach you, they light their fuse once they're close enough.
 - **Slimes super-jump** over walls and lunge at you.
 - Respects the `mob_griefing` gamerule. Chests and other containers, and obsidian-tier blocks, are never broken.

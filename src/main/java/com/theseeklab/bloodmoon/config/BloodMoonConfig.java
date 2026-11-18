@@ -109,7 +109,19 @@ public class BloodMoonConfig {
 	/** Blocks harder than this (obsidian is 50) can never be broken. */
 	public float maxBreakableHardness = 20.0F;
 	public int minBreakTicks = 15;
+	/** Only applies when restoreBrokenBlocks is off: restored blocks never drop, or they could be farmed. */
 	public boolean dropBrokenBlocks = true;
+	/**
+	 * Blocks the horde breaks (zombies digging, creepers exploding) come back a few seconds after the Blood Moon ends,
+	 * like horde cobblestone crumbling. Containers come back empty, since their contents spill when they break.
+	 * Off by default, so horde damage is permanent unless a server opts in.
+	 */
+	public boolean restoreBrokenBlocks = false;
+	/**
+	 * Only restore blocks that were there before the Blood Moon started. Blocks players place during the night (walls
+	 * and pillars thrown up mid-fight) break and drop normally instead of coming back at dawn.
+	 */
+	public boolean restoreOnlyPreexistingBlocks = true;
 	/** Never break blocks that hold items (chests, barrels, furnaces...). */
 	public boolean protectContainers = true;
 	public List<String> unbreakableBlocks = new ArrayList<>(List.of(

@@ -3,6 +3,8 @@
 	"package": "com.theseeklab.bloodmoon.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
+		"BlockItemMixin",
+		"ExplosionMixin",
 		"MagmaCubeMixin",
 		"MobAccessor",
 		"ServerPlayerMixin",

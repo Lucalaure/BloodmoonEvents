@@ -16,6 +16,7 @@ Inspired by [Seventh Night: Blood Moon](https://www.curseforge.com/minecraft/mc-
   - bridge gaps.
   - later they also break walls, doors and ceilings and dig down. Harder blocks take longer, and several zombies on one block stack their progress.
   - they build with **horde cobblestone**, a darker, blood-stained cobblestone. It breaks like cobblestone but drops nothing, has no item, and crumbles away after the Blood Moon, so the horde never leaves permanent blocks in your world.
+  - optionally, whatever they break comes back too (`restoreBrokenBlocks`, off by default): a few seconds after dawn, every block zombies dug out or horde creepers blew up reappears, lowest first. Those blocks drop nothing when broken, so a Blood Moon can't be farmed. Containers come back empty (their contents spill out as usual), shulker boxes drop normally, and if you built over a hole, your block stays and the original drops as an item. Only blocks that were there before the Blood Moon come back: walls and pillars you put up during the fight break and drop like normal blocks.
 - **Creepers** that can't path to you ignite once they're within 8 blocks.
 - **Slimes and magma cubes** jump about 1.8× higher, twice as often, and lunge toward their target.
 - Respects the `mob_griefing` gamerule. Containers (chests, barrels…) and obsidian-tier blocks are never broken.
@@ -62,6 +63,8 @@ At one Blood Moon every 7 nights, #10 lands on night 70. That's about 23 hours o
 - `...FromLevel`: the Blood Moon number each ability unlocks on
 - `hordeSpawns`: a list of `{id, weight, fromLevel}`
 - `builderMobs`, `maxBreakableHardness`
+- `restoreBrokenBlocks`: off by default, so horde damage is permanent and `dropBrokenBlocks` decides whether broken blocks drop. Set it to true to make the damage heal at dawn
+- `restoreOnlyPreexistingBlocks`: set it to false to also restore blocks players placed during the Blood Moon
 - `slimeJumpMultiplier`, `creeperBreachDistance`
 - `onlyHordeMobsUpgraded`: set it to false to give the AI to every mob during a Blood Moon
 
@@ -99,6 +102,7 @@ The automated client game test from the 26.x branch is not available here: Fabri
 | Tagging horde mobs, armour, attaching AI goals on load | `HordeMobs` |
 | Break/pillar/bridge AI | `ai/BreakAndBuildGoal`, `ai/StuckTracker`, `ai/BlockDamageTracker` |
 | Temporary horde cobblestone | `block/HordeBlock`, `block/ModBlocks` |
+| Restoring broken blocks after dawn | `restore/BrokenBlockRestorer`, `restore/BrokenBlocksState`, `mixin/ExplosionMixin`, `mixin/BlockItemMixin` |
 | Survival advancements | `BloodMoonAdvancements` + `data/bloodmoonevents/advancement/` |
 | Creeper breach | `ai/CreeperBreachGoal` |
 | Horde targeting through walls | `ai/HordeTargetGoal` |

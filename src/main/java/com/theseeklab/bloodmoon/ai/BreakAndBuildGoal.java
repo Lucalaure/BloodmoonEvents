@@ -4,6 +4,7 @@ import com.theseeklab.bloodmoon.BloodMoonManager;
 import com.theseeklab.bloodmoon.HordeMobs;
 import com.theseeklab.bloodmoon.block.ModBlocks;
 import com.theseeklab.bloodmoon.config.BloodMoonConfig;
+import com.theseeklab.bloodmoon.restore.BrokenBlockRestorer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -264,7 +265,9 @@ public class BreakAndBuildGoal extends Goal {
 
 		if (progress >= required) {
 			BlockDamageTracker.clear(level, pos);
-			level.destroyBlock(pos, config.dropBrokenBlocks, mob);
+			// A block that comes back after the Blood Moon drops nothing, or it could be farmed.
+			boolean restored = BrokenBlockRestorer.record(level, pos);
+			level.destroyBlock(pos, config.dropBrokenBlocks && !restored, mob);
 			breakingPos = null;
 			cooldown = 4;
 			stuckTracker.reset();

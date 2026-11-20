@@ -57,6 +57,8 @@ At one Blood Moon every 7 nights, #10 lands on night 70. That's about 23 hours o
 
 ## Config
 
+With **[Mod Menu](https://modrinth.com/mod/modmenu)** and **[Cloth Config](https://modrinth.com/mod/cloth-config)** installed, every option can be edited in-game: Mods → Bloodmoon Events → the config button. Both are optional.
+
 `config/bloodmoonevents.json` is created on first launch. Every option is commented in [BloodMoonConfig.java](src/main/java/com/theseeklab/bloodmoon/config/BloodMoonConfig.java). The main ones are:
 - `intervalNights`, `firstNight`, `randomChance`
 - `maxLevel`, plus `{start, end}` pairs for `maxHordePerPlayer`, `mobsPerWave`, `waveIntervalTicks`, `breakTicksPerHardness` and `armorChance`

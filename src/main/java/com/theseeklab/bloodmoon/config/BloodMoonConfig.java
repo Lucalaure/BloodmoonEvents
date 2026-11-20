@@ -204,6 +204,12 @@ public class BloodMoonConfig {
 		save();
 	}
 
+	/** Called by the in-game config screen after it wrote its values into the live config: clean them up and save. */
+	public static void applyEdits() {
+		instance.validate();
+		save();
+	}
+
 	public static void save() {
 		try {
 			Files.createDirectories(PATH.getParent());

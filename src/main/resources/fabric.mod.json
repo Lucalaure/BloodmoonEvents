@@ -16,6 +16,9 @@
 		],
 		"client": [
 			"com.theseeklab.bloodmoon.client.BloodmoonEventsClient"
+		],
+		"modmenu": [
+			"com.theseeklab.bloodmoon.client.config.BloodMoonModMenu"
 		]
 	},
 	"mixins": [
@@ -30,5 +33,9 @@
 		"minecraft": "~26.3",
 		"java": ">=25",
 		"fabric-api": "*"
+	},
+	"suggests": {
+		"modmenu": "*",
+		"cloth-config": "*"
 	}
 }

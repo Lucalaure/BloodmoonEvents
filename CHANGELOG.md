@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0 (Minecraft 26.3), 2026-11-20
+
+### Added
+- **In-game config screen.** With Mod Menu and Cloth Config installed, open Mods → Bloodmoon Events → the config button to edit every option, sorted into tabs with a tooltip and a reset button for each. Saving applies the changes straight away, no `/bloodmoon reload` needed.
+  - The horde mob list is edited as one line per mob, such as `minecraft:zombie 40 1` (mob, weight, first Blood Moon).
+  - Both mods are optional. Without Cloth Config, the button explains what to install.
+  - The screen edits the config on your own computer. On a dedicated server, edit the server's `config/bloodmoonevents.json` as before.
+
 ## 1.2.0 (Minecraft 26.3), 2026-11-18
 
 ### Added

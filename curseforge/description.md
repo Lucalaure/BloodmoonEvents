@@ -59,7 +59,7 @@ The armour mobs wear never drops, so you can't farm a Blood Moon for iron.
 
 ## Configuration
 
-Everything is in `config/bloodmoonevents.json`:
+Edit everything in-game with **Mod Menu** and **Cloth Config** (both optional): Mods → Bloodmoon Events → the config button. Or edit `config/bloodmoonevents.json` and run `/bloodmoon reload`. You can change:
 - the schedule
 - the horde roster and spawn weights
 - every difficulty value (start and end)
